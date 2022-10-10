@@ -19,7 +19,7 @@ import (
 	"oredavids.com/greetings"
 )
 
-const credsFilePathEnv = "PATH_TO_CREDENTIALS_FILE"
+const credsFilePathEnv = "MYCAL_GOOGLE_CALENDAR_CREDENTIALS_FILE_PATH"
 
 // init sets initial values for variables used in the function.
 func init() {
@@ -49,12 +49,8 @@ func greet() {
 // return the value of the key
 func goDotEnvVariable(key string) string {
 
-	// load .env file
-	err := godotenv.Load(".env")
-
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
+	// load the .env file in the current directory, if one exists
+	godotenv.Load()
 
 	return os.Getenv(key)
 }
@@ -64,7 +60,7 @@ func getClient(config *oauth2.Config) *http.Client {
 	// The file token.json stores the user's access and refresh tokens, and is
 	// created automatically when the authorization flow completes for the first
 	// time.
-	tokFile := "token.json"
+	tokFile := "myCalAppToken.json"
 	tok, err := tokenFromFile(tokFile)
 	if err != nil {
 		tok = getTokenFromWeb(config)
