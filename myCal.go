@@ -181,10 +181,11 @@ func getEventTime(event *calendar.Event, isToday bool) time.Time {
 	}
 
 	fmt.Printf(
-		"%v -- %v %v\n",
+		"%v -- %v %v %v\n",
 		event.Summary,
 		formattedTime,
 		termlink.ColorLink("Meeting Link", event.ConferenceData.EntryPoints[0].Uri, "italic green"),
+		termlink.ColorLink("Calendar Link", event.HtmlLink, "italic blue"),
 	)
 	return t
 }
