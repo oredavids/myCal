@@ -11,12 +11,11 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"github.com/savioxavier/termlink"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/calendar/v3"
 	"google.golang.org/api/option"
-
-	"oredavids.com/greetings"
 )
 
 const credsFilePathEnv = "MYCAL_GOOGLE_CALENDAR_CREDENTIALS_FILE_PATH"
@@ -24,25 +23,6 @@ const credsFilePathEnv = "MYCAL_GOOGLE_CALENDAR_CREDENTIALS_FILE_PATH"
 // init sets initial values for variables used in the function.
 func init() {
 	rand.Seed(time.Now().UnixNano())
-}
-
-func greet() {
-	// A slice of names.
-	names := []string{"Ore", "Oreoluwa", "OreDavids"}
-
-	name := names[rand.Intn(len(names))]
-
-	// Request greeting messages for the name
-	messages, err := greetings.Hello(name)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// If no error was returned, print the returned message to the console.
-	log := fmt.Sprintf("\n%s\n", messages)
-
-	fmt.Println(log)
 }
 
 // use godot package to load/read the .env file and
@@ -200,7 +180,12 @@ func getEventTime(event *calendar.Event, isToday bool) time.Time {
 		formattedTime = t.Format("Monday, 3:00PM")
 	}
 
-	fmt.Printf("%v -- %v\n", event.Summary, formattedTime)
+	fmt.Printf(
+		"%v -- %v %v\n",
+		event.Summary,
+		formattedTime,
+		termlink.ColorLink("Meeting Link", event.ConferenceData.EntryPoints[0].Uri, "italic green"),
+	)
 	return t
 }
 
@@ -210,8 +195,6 @@ func main() {
 	// the time, source file, and line number.
 	log.SetPrefix("myCalApp: ")
 	log.SetFlags(0)
-
-	greet()
 
 	credsFilePath := goDotEnvVariable(credsFilePathEnv)
 

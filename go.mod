@@ -2,13 +2,11 @@ module oredavids.com/myCal
 
 go 1.19
 
-replace oredavids.com/greetings => ./greetings
-
 require (
 	github.com/joho/godotenv v1.4.0
+	github.com/savioxavier/termlink v1.2.1
 	golang.org/x/oauth2 v0.0.0-20221006150949-b44042a4b9c1
 	google.golang.org/api v0.98.0
-	oredavids.com/greetings v0.0.0-00010101000000-000000000000
 )
 
 require (
@@ -18,9 +16,11 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.1.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.4.0 // indirect
+	github.com/jwalton/go-supportscolor v1.1.0 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/net v0.0.0-20220909164309-bea034e7d591 // indirect
 	golang.org/x/sys v0.0.0-20220728004956-3c1f35247d10 // indirect
+	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220624142145-8cd45d7dbd1f // indirect
