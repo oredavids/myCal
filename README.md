@@ -2,6 +2,8 @@
 
 Simple adaptation of the Go quickstart for Google calendar.
 
+![image](output.png)
+
 ## Prerequisite
 
 - Go `v1.19`
