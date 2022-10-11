@@ -140,31 +140,30 @@ func logEventsForToday(calendarService *calendar.Service) {
 	if len(events.Items) == 0 {
 		fmt.Println("No upcoming events found for today.")
 	} else {
-		for _, item := range events.Items {
-			date := item.Start.DateTime
-			if date == "" {
-				date = item.Start.Date
-			}
-
-			t, err := time.Parse(time.RFC3339, date)
-
-			if err != nil {
-				fmt.Println(err)
-			}
-			fmt.Printf("%v -- %v (%v)\n", item.Summary, t.Format(time.Kitchen), item.HangoutLink)
+		for _, eventItem := range events.Items {
+			getEventTime(eventItem, true)
 		}
 	}
 
 	if len(events.Items) < 3 {
-		logUpcomingEvents(calendarService, 5)
+		maxNumberOfEvents := 5
+		excludeToday := true
+		logUpcomingEvents(calendarService, int64(maxNumberOfEvents), excludeToday)
 	}
 }
 
-func logUpcomingEvents(calendarService *calendar.Service, maxNumberOfEvents int64) {
-	t := time.Now().Format(time.RFC3339)
+func logUpcomingEvents(calendarService *calendar.Service, maxNumberOfEvents int64, excludeToday bool) {
+	now := time.Now()
+
+	var timeToStart string
+	if excludeToday {
+		timeToStart = time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, now.Nanosecond(), now.Location()).Format(time.RFC3339)
+	} else {
+		timeToStart = time.Now().Format(time.RFC3339)
+	}
 
 	events, err := calendarService.Events.List("primary").ShowDeleted(false).
-		SingleEvents(true).TimeMin(t).MaxResults(maxNumberOfEvents).OrderBy("startTime").Do()
+		SingleEvents(true).TimeMin(timeToStart).MaxResults(maxNumberOfEvents).OrderBy("startTime").Do()
 	if err != nil {
 		log.Fatalf("Unable to retrieve next couple of your events: %v", err)
 	}
@@ -173,24 +172,36 @@ func logUpcomingEvents(calendarService *calendar.Service, maxNumberOfEvents int6
 	if len(events.Items) == 0 {
 		fmt.Println("No upcoming events found!")
 	} else {
-		for _, item := range events.Items {
-			date := item.Start.DateTime
-			if date == "" {
-				date = item.Start.Date
-			}
-			t, err := time.Parse(time.RFC3339, date)
-			if err != nil {
-				t, err := time.Parse("2006-01-02", date)
-				if err != nil {
-					fmt.Println(err)
-				}
-				fmt.Printf("%v -- %v\n", item.Summary, t.Format("Monday")+" All day")
-				continue
-			}
-
-			fmt.Printf("%v -- %v\n", item.Summary, t.Format("Monday, 3:00PM"))
+		for _, eventItem := range events.Items {
+			getEventTime(eventItem, false)
 		}
 	}
+}
+
+func getEventTime(event *calendar.Event, isToday bool) time.Time {
+	date := event.Start.DateTime
+	if date == "" {
+		date = event.Start.Date
+	}
+	t, err := time.Parse(time.RFC3339, date)
+	if err != nil {
+		t, err := time.Parse("2006-01-02", date)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Printf("%v -- %v\n", event.Summary, t.Format("Monday")+" All day")
+		return t
+	}
+
+	var formattedTime string
+	if isToday {
+		formattedTime = t.Format(time.Kitchen)
+	} else {
+		formattedTime = t.Format("Monday, 3:00PM")
+	}
+
+	fmt.Printf("%v -- %v\n", event.Summary, formattedTime)
+	return t
 }
 
 func main() {
