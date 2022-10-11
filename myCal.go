@@ -116,7 +116,7 @@ func logEventsForToday(calendarService *calendar.Service) {
 		log.Fatalf("Unable to retrieve events for today: %v", err)
 	}
 
-	fmt.Println(color["Green"] + "Upcoming Events for Today:" + color["Reset"])
+	fmt.Println(color["Green"] + "Today's Events:" + color["Reset"])
 	if len(events.Items) == 0 {
 		fmt.Println("No upcoming events found for today.")
 	} else {
