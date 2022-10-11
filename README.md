@@ -47,3 +47,9 @@ go run .
     export MYCAL_GOOGLE_CALENDAR_CREDENTIALS_FILE_PATH=/path/to/credentials.json // Where installed app can find your API credentials
     myCal
     ```
+
+    Now that the app has been installed and configured you can also run the executable anywhere, manually with:
+
+    ```cli
+    myCal
+    ```
