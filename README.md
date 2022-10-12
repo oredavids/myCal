@@ -1,6 +1,6 @@
 # myCal
 
-Simple adaptation of the Go quickstart for Google calendar.
+Google Calendar CLI app extending the Go quickstart for Google calendar.
 
 ![image](output.png)
 
