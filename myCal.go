@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"path"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -18,7 +19,9 @@ import (
 	"google.golang.org/api/option"
 )
 
-const credsFilePathEnv = "MYCAL_GOOGLE_CALENDAR_CREDENTIALS_FILE_PATH"
+const credsDirectoryEnv = "MYCAL_CREDENTIALS_DIRECTORY"
+
+var credsDirectory = goDotEnvVariable(credsDirectoryEnv)
 
 // init sets initial values for variables used in the function.
 func init() {
@@ -40,9 +43,10 @@ func getClient(config *oauth2.Config) *http.Client {
 	// The file token.json stores the user's access and refresh tokens, and is
 	// created automatically when the authorization flow completes for the first
 	// time.
-	tokFile := "myCalAppToken.json"
+	tokFile := path.Join(credsDirectory, "myCalAppToken.json")
 	tok, err := tokenFromFile(tokFile)
 	if err != nil {
+		fmt.Println(err)
 		tok = getTokenFromWeb(config)
 		saveToken(tokFile, tok)
 	}
@@ -197,14 +201,12 @@ func main() {
 	log.SetPrefix("myCalApp: ")
 	log.SetFlags(0)
 
-	credsFilePath := goDotEnvVariable(credsFilePathEnv)
-
-	if credsFilePath == "" {
-		log.Fatalf("Env variable %s is required", credsFilePathEnv)
+	if credsDirectory == "" {
+		fmt.Printf("Credentials directory not configured. Current working directory will be used.\n Set '%s' env variable to configure\n", credsDirectoryEnv)
 	}
 
 	ctx := context.Background()
-	b, err := os.ReadFile(credsFilePath)
+	b, err := os.ReadFile(path.Join(credsDirectory, "myCalAppCredentials.json"))
 	if err != nil {
 		log.Fatalf("Unable to read client secret file: %v", err)
 	}
