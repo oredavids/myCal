@@ -6,7 +6,7 @@ Google Calendar CLI app extending the Go quickstart for Google calendar.
 
 ## Prerequisite
 
-- Go `v1.19`
+- [Go](https://go.dev/doc/install) minimum version 1.19
 
 ## Setup
 
