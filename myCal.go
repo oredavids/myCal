@@ -184,11 +184,29 @@ func getEventTime(event *calendar.Event, isToday bool) time.Time {
 		formattedTime = t.Format("Monday, 3:00PM")
 	}
 
+	var meetingLink string
+	var meetingLinkText string
+	var meetingLinkColor string
+
+	if event.ConferenceData != nil && event.ConferenceData.EntryPoints[0] != nil {
+		meetingLink = event.ConferenceData.EntryPoints[0].Uri
+		meetingLinkText = "Meeting Link"
+		meetingLinkColor = "italic green"
+	} else {
+		meetingLinkColor = "yellow"
+		meetingLinkText = "NO MEETING LINK!"
+		meetingLink = event.Location // Fallback to event location TODO: do isLink check so that this can show up like other links
+
+		if meetingLink != "" {
+			meetingLinkText = "Location Link"
+		}
+	}
+
 	fmt.Printf(
 		"%v -- %v %v %v\n",
 		event.Summary,
 		formattedTime,
-		termlink.ColorLink("Meeting Link", event.ConferenceData.EntryPoints[0].Uri, "italic green"),
+		termlink.ColorLink(meetingLinkText, meetingLink, meetingLinkColor),
 		termlink.ColorLink("Calendar Link", event.HtmlLink, "italic blue"),
 	)
 	return t
