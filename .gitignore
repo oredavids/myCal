@@ -1,3 +1,4 @@
 .env
-credentials.json
+myCalAppCredentials.json
 myCalAppToken.json
+.claude
