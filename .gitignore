@@ -1,4 +1,5 @@
 .env
 myCalAppCredentials.json
 myCalAppToken.json
-.claude
+.vscode
+myCal
