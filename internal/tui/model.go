@@ -113,7 +113,7 @@ func (m Model) View() string {
 	var b strings.Builder
 
 	// Header
-	b.WriteString(RenderHeader())
+	b.WriteString(renderHeader(getUserName()))
 	b.WriteString("\n")
 
 	// Next meeting countdown
@@ -133,7 +133,7 @@ func (m Model) View() string {
 
 	// Today's events
 	b.WriteString("\n")
-	b.WriteString(RenderSectionTitle("Today", "📅"))
+	b.WriteString(RenderSectionTitle("Today", "🗓"))
 	b.WriteString("\n")
 	if len(m.todayEvents) == 0 {
 		b.WriteString(NoEventsStyle.Render("No events remaining today"))

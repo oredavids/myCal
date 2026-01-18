@@ -11,11 +11,65 @@ import (
 	"oredavids.com/myCal/internal/calendar"
 )
 
-// RenderHeader returns the styled header with date and greeting
-func RenderHeader() string {
+// RenderData holds all data needed for rendering
+type RenderData struct {
+	UserName       string
+	TodayEvents    []*calendar.Event
+	UpcomingEvents []*calendar.Event
+	NextEvent      *calendar.Event
+}
+
+// RenderStatic renders the complete static output
+func RenderStatic(data RenderData) string {
+	var b strings.Builder
+
+	// Header
+	b.WriteString(renderHeader(data.UserName))
+	b.WriteString("\n")
+
+	// Next meeting countdown
+	if data.NextEvent != nil {
+		countdown := RenderCountdown(data.NextEvent)
+		if countdown != "" {
+			b.WriteString(countdown)
+			b.WriteString("\n")
+		}
+	}
+
+	// Today's events
+	b.WriteString("\n")
+	b.WriteString(RenderSectionTitle("Today", "🗓"))
+	b.WriteString("\n")
+	if len(data.TodayEvents) == 0 {
+		b.WriteString(NoEventsStyle.Render("No events remaining today"))
+	} else {
+		b.WriteString(RenderEventList(data.TodayEvents, true, -1))
+	}
+	b.WriteString("\n")
+
+	// Upcoming events
+	if len(data.UpcomingEvents) > 0 {
+		b.WriteString("\n")
+		b.WriteString(RenderSectionTitle("Upcoming", "🗓"))
+		b.WriteString("\n")
+		b.WriteString(RenderEventList(data.UpcomingEvents, false, -1))
+		b.WriteString("\n")
+	}
+
+	return b.String()
+}
+
+// renderHeader returns the styled header with date, time, and greeting
+func renderHeader(userName string) string {
 	now := time.Now()
-	dateStr := now.Format("Monday, January 2, 2006")
-	greeting := fmt.Sprintf("%s, %s!", getGreeting(), getUserName())
+	dateStr := now.Format("Monday, January 2, 2006 · 3:04 PM")
+
+	var greeting string
+	if userName != "" {
+		greeting = fmt.Sprintf("%s, %s!", getGreeting(), userName)
+	} else {
+		greeting = fmt.Sprintf("%s!", getGreeting())
+	}
 
 	header := lipgloss.JoinVertical(
 		lipgloss.Left,
@@ -32,9 +86,14 @@ func RenderHeader() string {
 	return headerBox
 }
 
+// GetUserName returns the current user's name (exported for main.go)
+func GetUserName() string {
+	return getUserName()
+}
+
 // RenderSectionTitle returns a styled section title
 func RenderSectionTitle(title string, icon string) string {
-	return SectionTitleStyle.Render(icon + " " + title)
+	return SectionTitleStyle.Render(icon + "  " + title)
 }
 
 // RenderEventList renders a list of events in a styled box

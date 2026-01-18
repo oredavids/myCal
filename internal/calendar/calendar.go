@@ -112,3 +112,55 @@ func wrapEvent(e *calendar.Event) *Event {
 func (e *Event) TimeUntilStart() time.Duration {
 	return e.StartTime.Sub(time.Now())
 }
+
+// GetDemoEvents returns mock events for demo/screenshot purposes
+func GetDemoEvents() ([]*Event, []*Event, *Event) {
+	now := time.Now()
+
+	// Create demo upcoming events
+	upcoming := []*Event{
+		{
+			Event: &calendar.Event{
+				Summary:  "Team Standup",
+				HtmlLink: "https://calendar.google.com/event/123",
+			},
+			StartTime:  time.Date(now.Year(), now.Month(), now.Day()+1, 10, 30, 0, 0, now.Location()),
+			IsAllDay:   false,
+			MeetingURL: "https://meet.google.com/abc-defg-hij",
+		},
+		{
+			Event: &calendar.Event{
+				Summary:  "Focus Time",
+				HtmlLink: "https://calendar.google.com/event/456",
+			},
+			StartTime: time.Date(now.Year(), now.Month(), now.Day()+2, 0, 0, 0, 0, now.Location()),
+			IsAllDay:  true,
+		},
+		{
+			Event: &calendar.Event{
+				Summary:  "All Hands",
+				HtmlLink: "https://calendar.google.com/event/789",
+			},
+			StartTime:  time.Date(now.Year(), now.Month(), now.Day()+2, 10, 0, 0, 0, now.Location()),
+			IsAllDay:   false,
+			MeetingURL: "https://meet.google.com/xyz-uvwx-yz",
+		},
+		{
+			Event: &calendar.Event{
+				Summary:  "1:1 Meeting",
+				HtmlLink: "https://calendar.google.com/event/101",
+			},
+			StartTime:  time.Date(now.Year(), now.Month(), now.Day()+3, 14, 30, 0, 0, now.Location()),
+			IsAllDay:   false,
+			MeetingURL: "https://meet.google.com/one-two-three",
+		},
+	}
+
+	// No events for today in demo
+	today := []*Event{}
+
+	// Next event is the first upcoming
+	next := upcoming[0]
+
+	return today, upcoming, next
+}

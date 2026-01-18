@@ -1,59 +1,121 @@
 # myCal
 
-Google Calendar CLI app extending the Go quickstart for Google calendar.
+A modern, terminal-based Google Calendar client with a beautiful TUI.
 
-![image](output.png)
+![myCal demo](./assets/demo.png)
 
-## Prerequisite
+## Features
 
-- [Go](https://go.dev/doc/install) minimum version 1.19
+- **Clean UI** - Modern terminal interface with styled event cards and visual hierarchy
+- **Interactive Mode** - Navigate events with keyboard, press Enter to join meetings
+- **Next Meeting Countdown** - Always know when your next meeting starts
+- **Multiple Themes** - Choose from 6 built-in color schemes
+- **Smart Links** - Clickable hyperlinks in supported terminals, fallback URLs otherwise
+- **Auto-refresh** - Watch mode updates every 5 minutes
 
-## Setup
+## Installation
 
-1. Clone this repository
-1. Follow the environment instructions [here](https://developers.google.com/calendar/api/quickstart/go#set_up_your_environment) to obtain the API credentials required.
-1. Rename your generated credentials as `myCalAppCredentials.json`
-. Rename `.env.sample` as `.env` and replace the value of `MYCAL_CREDENTIALS_DIRECTORY` with the path to the parent directory of your generated credentials file.
+### Prerequisites
 
-> **Note**
-> `MYCAL_CREDENTIALS_DIRECTORY` is also where the generated token will be stored. If this env is not set the current working directory will be used; this will have the side effect of needing to generate new tokens in each new directory where the myCal command is run for the first time.
+- [Go](https://go.dev/doc/install) 1.19 or later
+- Google Calendar API credentials ([setup guide](https://developers.google.com/calendar/api/quickstart/go#set_up_your_environment))
 
-## Run
+### Quick Start
 
-```cli
-go run .
+```bash
+# Clone the repository
+git clone https://github.com/oredavids/myCal.git
+cd myCal
+
+# Build and install
+go install
+
+# Run
+myCal
 ```
 
-### Run from any terminal
+### Configuration
 
-1. Build the app
+1. Obtain Google Calendar API credentials following the [official guide](https://developers.google.com/calendar/api/quickstart/go#set_up_your_environment)
 
-    ```cli
-    go build
-    ```
+2. Save your credentials as `myCalAppCredentials.json`
 
-1. Confirm the directory where the go app will be installed
+3. Create a `.env` file (or copy from `.env.sample`):
 
-    ```cli
-    go list -f '{{.Target}}' // Example output: /Users/oredavids/go/bin/myCal
-    ```
+```bash
+MYCAL_CREDENTIALS_DIRECTORY=/path/to/credentials/directory
+```
 
-1. Install the app
+> **Note:** This directory stores both your credentials and the generated OAuth token. If not set, the current working directory is used.
 
-    ```cli
-    go install
-    ```
+## Usage
 
-1. Update your shell config file (e.g bashrc, .zshrc, etc)
+```bash
+# Basic usage - show today's events and upcoming
+myCal
 
-    ```cli
-    export PATH=$PATH:/Users/oredavids/go // Add directory, confirmed earlier, to your PATH variable
-    export MYCAL_CREDENTIALS_DIRECTORY=/Users/path/to/credentials/directory // Where installed app can find your API credentials & store your token
-    myCal // OPTIONAL - Run myCal automatically when new terminal window is opened
-    ```
+# Interactive watch mode
+myCal --watch
+myCal -w
 
-    Now that the app has been installed and configured you can run the executable anywhere, manually with:
+# Use a different theme
+myCal --theme dracula
 
-    ```cli
-    myCal
-    ```
+# Demo mode (for screenshots)
+myCal --demo
+```
+
+### Keyboard Shortcuts (Watch Mode)
+
+| Key | Action |
+|-----|--------|
+| `↑` / `k` | Move up |
+| `↓` / `j` | Move down |
+| `Enter` | Open meeting link |
+| `r` | Refresh |
+| `q` | Quit |
+
+### Themes
+
+```bash
+myCal --theme <name>
+```
+
+Available themes:
+- `default` - Purple and cyan
+- `catppuccin` - Soft pastels
+- `dracula` - Classic dark theme
+- `nord` - Cool blues
+- `tokyonight` - Deep purples
+- `gruvbox` - Warm earth tones
+
+## Project Structure
+
+```
+myCal/
+├── main.go                 # Entry point
+├── internal/
+│   ├── auth/               # OAuth authentication
+│   ├── calendar/           # Google Calendar API wrapper
+│   ├── config/             # Environment configuration
+│   └── tui/                # Terminal UI components
+│       ├── model.go        # Bubbletea model (interactive mode)
+│       ├── render.go       # View rendering
+│       ├── styles.go       # Lipgloss styles
+│       └── themes.go       # Color themes
+└── assets/                 # Screenshots and images
+```
+
+## Terminal Compatibility
+
+myCal works in all terminals. Features vary by terminal capabilities:
+
+| Terminal | Clickable Links | Full Color |
+|----------|-----------------|------------|
+| iTerm2   | Yes | Yes |
+| Wezterm  | Yes | Yes |
+| Kitty    | Yes | Yes |
+| macOS Terminal | No | Yes |
+| VS Code  | No | Yes |
+
+Terminals without hyperlink support show meeting URLs directly for easy copy/paste.
